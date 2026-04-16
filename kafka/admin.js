@@ -1,11 +1,11 @@
 import { Kafka } from "kafkajs";
 
-const Kafka = new Kafka({
+const kafka = new Kafka({
     clientId: "kafka-service",
     brokers: ["localhost:9094"],
 })
 
-const admin = Kafka.admin();
+const admin = kafka.admin();
 
 async function run() {
     await admin.connect();

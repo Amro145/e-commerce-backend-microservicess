@@ -1,34 +1,40 @@
-import express from "express";
-import cors from "cors";
+import { Kafka } from "kafkajs";
 
-const app = express();
-
-// Configure CORS for specific origins
-app.use(cors({
-    origin: ["https://e-commerce-frontend-3rig.vercel.app", "http://localhost:3000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
-
-app.use(express.json());
-
-// Basic health check route
-app.get("/", (req, res) => {
-    res.send("Email service is running");
+const kafka = new Kafka({
+  clientId: "email-service",
+  brokers: ["localhost:9094"],
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(err.status || 500).send(err.message);
-});
+const producer = kafka.producer();
+const consumer = kafka.consumer({ groupId: "email-service" });
 
-// 404 handler
-app.use((req, res, next) => {
-    res.status(404).send("Not found");
-});
+const run = async () => {
+  try {
+    await producer.connect();
+    await consumer.connect();
+    await consumer.subscribe({
+      topic: "order-successful",
+      fromBeginning: true,
+    });
 
-const PORT = 8002;
-app.listen(PORT, () => {
-    console.log(`Email service is running on port ${PORT}`);
-});
+    await consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        const value = message.value.toString();
+        const { userId, orderId } = JSON.parse(value);
+
+        // TODO: Send Email to the User
+        const email = `${userId}@gmail.com`;
+        console.log(`Email consumer: Sending email to user id: ${userId}`);
+
+        await producer.send({
+          topic: "email-successful",
+          messages: [{ value: JSON.stringify({ userId, email }) }],
+        });
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+run();
