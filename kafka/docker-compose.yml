@@ -6,12 +6,13 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9094
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,EXTERNAL://localhost:9094
+      # Fixed the 3.9.0 bug by explicitly advertising the CONTROLLER listener
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:9092,EXTERNAL://localhost:9094,CONTROLLER://kafka-broker-1:9093
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: 7Dvn0OLMQo-bg4qmCmflVg
+      CLUSTER_ID: '7Dvn0OLMQo-bg4qmCmflVg'
     ports:
       - "9094:9094"
     networks:
@@ -24,12 +25,13 @@ services:
       KAFKA_NODE_ID: 2
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9095
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:9092,EXTERNAL://localhost:9095
+      # Fixed the 3.9.0 bug by explicitly advertising the CONTROLLER listener
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:9092,EXTERNAL://localhost:9095,CONTROLLER://kafka-broker-2:9093
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: 7Dvn0OLMQo-bg4qmCmflVg
+      CLUSTER_ID: '7Dvn0OLMQo-bg4qmCmflVg'
     ports:
       - "9095:9095"
     networks:
@@ -42,12 +44,13 @@ services:
       KAFKA_NODE_ID: 3
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9096
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:9092,EXTERNAL://localhost:9096
+      # Fixed the 3.9.0 bug by explicitly advertising the CONTROLLER listener
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:9092,EXTERNAL://localhost:9096,CONTROLLER://kafka-broker-3:9093
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-broker-1:9093,2@kafka-broker-2:9093,3@kafka-broker-3:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: 7Dvn0OLMQo-bg4qmCmflVg
+      CLUSTER_ID: '7Dvn0OLMQo-bg4qmCmflVg'
     ports:
       - "9096:9096"
     networks:
@@ -59,7 +62,8 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker-1:9092,kafka-broker-2:9092,kafka-broker-3:9092
-      KAFKA_CLUSTERS_0_READONLY: "false"
+      KAFKA_CLUSTERS_0_READONLY: false
+      KAFKA_CLUSTERS_0_TOPIC_AUTO_CREATE: true
     ports:
       - "8080:8080"
     depends_on:
