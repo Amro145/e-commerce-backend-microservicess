@@ -70,6 +70,5 @@ app.use((req, res, next) => {
 
 const PORT = 8000;
 app.listen(PORT, () => {
-    run()
     console.log(`Payment service is running on port ${PORT}`);
 });

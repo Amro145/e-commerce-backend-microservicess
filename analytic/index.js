@@ -41,9 +41,9 @@ const run = async () => {
           case "email-successful":
             {
               const value = message.value.toString();
-              const { userId, emailId } = JSON.parse(value);
+              const { userId, email } = JSON.parse(value);
 
-              console.log(`Analytic consumer: Email id ${emailId} sent to user id ${userId}`);
+              console.log(`Analytic consumer: Email ${email} sent to user id ${userId}`);
             }
             break;
 
